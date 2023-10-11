@@ -12,3 +12,17 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
   font-weight: bold;
 }
 
+table {
+  margin: auto;
+}
+
+.inputs {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  width: 100%;
+}
+
+.field {
+  padding-right: 1rem;
+}

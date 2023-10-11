@@ -1,17 +1,22 @@
-<mat-form-field *ngFor="let display of displayedColumns">
-  <mat-label>Filter {{display}}</mat-label>
-  <input matInput (keyup)="applyFilter($event)" id="{{display}}">
-</mat-form-field>
+
+<div class="inputs">
+  <mat-form-field *ngFor="let display of displayedColumns" class="field">
+    <mat-label>Filter {{display}}</mat-label>
+    <input matInput (keyup)="applyFilter($event)" id="{{display}}">
+  </mat-form-field>
+</div>
+
 
 
 <table class="mat-elevation-z8 demo-table"
-       [dataSource]="filteredArray"
+       [dataSource]="dataSource"
+       matSort
        mat-table
        multiTemplateDataRows
-       *ngIf="chart">
+       *ngIf="chart" >
 
   <ng-container *ngFor="let column of displayedColumns" class="contain" matColumnDef="{{column}}">
-    <th *matHeaderCellDef class="trh expand-cell" mat-header-cell>{{column}}</th>
+    <th *matHeaderCellDef class="trh expand-cell" mat-header-cell mat-sort-header>{{column}}</th>
     <td *matCellDef="let element" class="tdb expand-cell" mat-cell>
       {{element[column]}}
     </td>
