@@ -1,20 +1,11 @@
-<label for="file">load file: <input #file accept=".json, .txt, application/json" id="file" type="file"></label>
+<div class="menu">
+  <label>Upload file: <input #file accept=".json, .txt, application/json" id="file" type="file"></label>
+  <div class="button-div"><button (click)="isGraph=!isGraph">Change</button></div>
+</div>
+
+<app-graph [chart]="chart" *ngIf="isGraph && chart" class="component"></app-graph>
+<app-table [chart]="chart" *ngIf="!isGraph && chart" class="component"></app-table>
 
 
-<canvas id="MyChart">{{ chartGraph }}</canvas>
 
-<table class="team-table"
-       [dataSource]="tableArray"
-       mat-table
-       multiTemplateDataRows>
 
-  <ng-container *ngFor="let column of displayedColumns" class="contain" matColumnDef="{{column}}">
-    <th *matHeaderCellDef class="trh expand-cell" mat-header-cell>{{column}}</th>
-    <td *matCellDef="let element" class="tdb expand-cell" mat-cell>
-      {{element[column]}}
-    </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let myRowData; columns: displayedColumns"></tr>
-</table>

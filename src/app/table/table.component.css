@@ -1,0 +1,14 @@
+.tdb,
+.trh {
+  text-align: center;
+  word-break: break-word;
+}
+
+th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
+  padding-right: 0.5rem;
+}
+
+.trh {
+  font-weight: bold;
+}
+
