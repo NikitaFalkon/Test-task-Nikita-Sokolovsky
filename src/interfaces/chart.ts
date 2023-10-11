@@ -8,3 +8,7 @@ export interface IData {
   data: string[],
   backgroundColor: string
 }
+
+export interface ITableClass {
+  [key: string]: any
+}

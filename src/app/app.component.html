@@ -1,2 +1,20 @@
-<label for="file">load file: <input id="file" type="file" #file accept=".json, .txt, application/json"></label>
-<canvas  id="MyChart">{{ chartGraph }}</canvas>
+<label for="file">load file: <input #file accept=".json, .txt, application/json" id="file" type="file"></label>
+
+
+<canvas id="MyChart">{{ chartGraph }}</canvas>
+
+<table class="team-table"
+       [dataSource]="tableArray"
+       mat-table
+       multiTemplateDataRows>
+
+  <ng-container *ngFor="let column of displayedColumns" class="contain" matColumnDef="{{column}}">
+    <th *matHeaderCellDef class="trh expand-cell" mat-header-cell>{{column}}</th>
+    <td *matCellDef="let element" class="tdb expand-cell" mat-cell>
+      {{element[column]}}
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let myRowData; columns: displayedColumns"></tr>
+</table>
