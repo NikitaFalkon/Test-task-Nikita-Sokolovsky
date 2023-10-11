@@ -1,8 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {fromEvent, map, Subscription, switchMap} from "rxjs";
-import {IChart} from "../interfaces/chart";
+import {IChartJs} from "../interfaces/chart";
 import {fromPromise} from "rxjs/internal/observable/innerFrom";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
+import Chart from 'chart.js/auto';
 
 @Component({
   selector: 'app-root',
@@ -12,20 +13,18 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
 export class AppComponent implements OnInit, OnDestroy {
   title = 'test-project';
   $sub: Subscription = new Subscription();
-  chart?: IChart = undefined;
-  graphForm: FormGroup = new FormGroup({
-    "title": new FormControl('', Validators.required),
-    "type": new FormControl('', Validators.required),
-    "data": new FormControl([], Validators.minLength(1)),
-    "columnNames": new FormControl([], Validators.minLength(1)),
-    "options": new FormGroup({
-      "hAxis": new FormGroup({
-        "title": new FormControl('', Validators.required),
-      }),
-      "vAxis": new FormGroup({
-        "title": new FormControl('', Validators.required),
-      }),
-    }),
+  chart?: IChartJs = undefined;
+  chartGraph?: any;
+
+  chartForm: FormGroup = new FormGroup({
+    "labels": new FormControl('', Validators.minLength(1)),
+    "datasets": new FormArray([
+      new FormGroup({
+        "label": new FormControl('', Validators.required),
+        "data": new FormControl([], Validators.minLength(1)),
+        "backgroundColor": new FormControl('', Validators.required),
+      })
+    ]),
   });
 
 
@@ -52,25 +51,29 @@ export class AppComponent implements OnInit, OnDestroy {
         })
       ).subscribe({
         next: data => {
+          console.log('>>',data)
           if (!data) {
+
             alert('File is incorrect!');
             return;
           }
-          const chart: IChart = JSON.parse(data);
-          if(this.checkGraphInform(chart)) {
+          const chart: IChartJs = JSON.parse(data);
+          if(!this.checkGraphInform(chart)) {
             alert('File is incorrect!');
             return;
           }
           this.chart = chart;
+          this.createChart()
         }
       })
     );
   }
 
 
-  checkGraphInform(chart: IChart) {
-    this.graphForm.patchValue(chart);
-    return this.graphForm.status !== 'INVALID';
+  checkGraphInform(chart: IChartJs) {
+    this.chartForm.patchValue(chart);
+    console.log(this.chartForm)
+    return this.chartForm.status !== 'INVALID';
   }
 
 
@@ -84,5 +87,20 @@ export class AppComponent implements OnInit, OnDestroy {
       return '';
     }
     return str;
+  }
+
+  createChart(){
+    if(!this.chart) {
+      return
+    }
+
+    this.chartGraph = new Chart("MyChart", {
+      type: 'line',
+
+      data: this.chart,
+      options: {
+        aspectRatio:2.5
+      }
+    });
   }
 }

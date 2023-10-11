@@ -1,16 +1,10 @@
-export interface IChart {
-  title: string;
-  type: string;
-  data: any[][];
-  columnNames: string[];
-  options?: IOptions;
+export interface IChartJs {
+  labels: string[],
+  datasets: IData[]
 }
 
-export interface IOptions  {
-  hAxis: IAxis,
-  vAxis: IAxis,
-}
-
-export interface IAxis  {
-  title: string
+export interface IData {
+  label: string,
+  data: string[],
+  backgroundColor: string
 }
