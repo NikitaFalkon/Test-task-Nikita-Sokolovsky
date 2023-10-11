@@ -1,14 +1,32 @@
-import { Component } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {fromEvent, map, Subscription, switchMap} from "rxjs";
+import {IChart} from "../interfaces/chart";
+import {fromPromise} from "rxjs/internal/observable/innerFrom";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 
-import {fromEvent, map, Subscription} from "rxjs";
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'test-project';
   $sub: Subscription = new Subscription();
+  chart?: IChart = undefined;
+  graphForm: FormGroup = new FormGroup({
+    "title": new FormControl('', Validators.required),
+    "type": new FormControl('', Validators.required),
+    "data": new FormControl([], Validators.minLength(1)),
+    "columnNames": new FormControl([], Validators.minLength(1)),
+    "options": new FormGroup({
+      "hAxis": new FormGroup({
+        "title": new FormControl('', Validators.required),
+      }),
+      "vAxis": new FormGroup({
+        "title": new FormControl('', Validators.required),
+      }),
+    }),
+  });
 
 
   ngOnDestroy(): void {
@@ -26,31 +44,45 @@ export class AppComponent {
       fromEvent(input, 'change').pipe(
         // @ts-ignore
         map(() => input.files[0]),
+        switchMap(res => {
+          return fromPromise(res.text())
+        }),
+        map(res => {
+          return this.isJsonString(res);
+        })
       ).subscribe({
         next: data => {
-          this.checkIsJSON(data);
+          if (!data) {
+            alert('File is incorrect!');
+            return;
+          }
+          const chart: IChart = JSON.parse(data);
+          if(this.checkGraphInform(chart)) {
+            alert('File is incorrect!');
+            return;
+          }
+          this.chart = chart;
         }
       })
     );
   }
 
 
-  /*  createGraph(jsonData: any) {
-    }*/
+  checkGraphInform(chart: IChart) {
+    this.graphForm.patchValue(chart);
+    return this.graphForm.status !== 'INVALID';
+  }
 
-  checkIsJSON(file: File) {
-    let reader = new FileReader();
-    reader.readAsText(file);
 
-    reader.onload = function () {
-      try {
-        if (typeof reader.result !== "string") {
-          throw "File is incorrect";
-        }
-        JSON.parse(reader.result);
-      } catch (err) {
-        alert('File is incorrect!');
+  isJsonString(str: unknown): string {
+    try {
+      if (typeof str !== "string") {
+        throw "File is incorrect";
       }
-    };
+      JSON.parse(str);
+    } catch (e) {
+      return '';
+    }
+    return str;
   }
 }
