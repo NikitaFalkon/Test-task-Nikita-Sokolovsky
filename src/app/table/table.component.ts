@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, Input, ViewChild} from '@angular/core';
-import {IChartJs, ITableClass} from "../../interfaces/chart";
+import {IArrayId, IChartJs, ITableClass} from "../../interfaces/chart";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatSort} from "@angular/material/sort";
 import {LiveAnnouncer} from "@angular/cdk/a11y";
@@ -16,6 +16,7 @@ export class TableComponent implements AfterViewInit {
   tableArray: ITableClass[] = [];
   filteredArray: ITableClass[] = [];
   dataSource = new MatTableDataSource(this.filteredArray);
+  idArray: IArrayId[] = [];
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
@@ -38,6 +39,7 @@ export class TableComponent implements AfterViewInit {
     this.displayedColumns = [];
     this.tableArray = [];
     this.filteredArray = [];
+    this.idArray = [];
 
     this.displayedColumns.push('Date')
 
@@ -73,10 +75,26 @@ export class TableComponent implements AfterViewInit {
   applyFilter(event: Event) {
     const id = (event.target as HTMLInputElement).id;
     const filterValue = (event.target as HTMLInputElement).value;
-    if (!filterValue) {
-      this.filteredArray = this.tableArray;
+    this.filteredArray = this.tableArray;
+    const arrayId = {
+      id: id,
+      value: filterValue
     }
-    this.filteredArray = this.tableArray.filter(arrMember => arrMember[id].toString().includes(filterValue));
+    if (!filterValue) {
+      this.idArray = this.idArray.filter((idArr) => idArr.id !== arrayId.id);
+    }
+    this.idArray.forEach(idArr => {
+      if(idArr.id === arrayId.id) {
+        idArr.value = arrayId.value;
+      }
+    })
+    if (!this.idArray.find(idInArray => idInArray.id === arrayId.id)) {
+      this.idArray.push(arrayId);
+    }
+    this.idArray.forEach(idArr => {
+      this.filteredArray = this.filteredArray.filter(arrMember => arrMember[idArr.id].toString().includes(idArr.value));
+    })
+
     this.dataSource.data = this.filteredArray;
   }
 

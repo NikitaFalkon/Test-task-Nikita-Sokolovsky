@@ -12,3 +12,8 @@ export interface IData {
 export interface ITableClass {
   [key: string]: any
 }
+
+export interface IArrayId {
+  id: string,
+  value: string
+}
