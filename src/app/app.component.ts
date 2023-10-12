@@ -34,11 +34,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.$sub.add(
       fromEvent(input, 'change').pipe(
-        catchError(() => {
-          this._snackBar.open('File upload error!', 'Close',
-            {panelClass: 'snack-warning', horizontalPosition: 'end', verticalPosition: 'top', duration: 0});
-          return EMPTY;
-        }),
         map((event) => {
           const target = event.target as HTMLInputElement;
           return (target.files || [])[0]
@@ -48,6 +43,11 @@ export class AppComponent implements OnInit, OnDestroy {
         }),
         map(res => {
           return this.isJsonString(res);
+        }),
+        catchError(() => {
+          this._snackBar.open('File upload error!', 'Close',
+            {panelClass: 'snack-warning', horizontalPosition: 'end', verticalPosition: 'top', duration: 0});
+          return EMPTY;
         }),
 
       ).subscribe({
