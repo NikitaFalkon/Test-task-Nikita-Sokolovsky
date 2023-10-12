@@ -3,6 +3,7 @@ import {fromEvent, map, Subscription, switchMap} from "rxjs";
 import {IChartJs} from "../interfaces/chart";
 import {fromPromise} from "rxjs/internal/observable/innerFrom";
 import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-root',
@@ -16,6 +17,9 @@ export class AppComponent implements OnInit, OnDestroy {
   isGraph: boolean = true;
   chartForm: FormGroup = new FormGroup({});
 
+  constructor(private _snackBar: MatSnackBar) {
+  }
+
 
   ngOnDestroy(): void {
     this.$sub.unsubscribe();
@@ -25,13 +29,14 @@ export class AppComponent implements OnInit, OnDestroy {
     const input = document.querySelector('#file');
     if (!input) {
       return;
-    }
+  }
 
-    // @ts-ignore
     this.$sub.add(
       fromEvent(input, 'change').pipe(
-        // @ts-ignore
-        map(() => input.files[0]),
+        map((event) => {
+          const target = event.target as HTMLInputElement;
+          return (target.files || [])[0]
+        }),
         switchMap(res => {
           return fromPromise(res.text())
         }),
@@ -41,13 +46,15 @@ export class AppComponent implements OnInit, OnDestroy {
       ).subscribe({
         next: data => {
           if (!data) {
-            alert('File data is not JSON!');
+            this._snackBar.open('File data is not JSON!', 'Close',
+              {panelClass: 'snack-warning', horizontalPosition: 'end', verticalPosition: 'top', duration: 0});
             return;
           }
           this.chartForm = this.clearFormGroup();
           const chart: IChartJs = JSON.parse(data);
           if (!this.checkGraphInform(chart) || !this.graphValidation(chart)) {
-            alert('Data type is incorrect!');
+            this._snackBar.open('Data type is incorrect!', 'Close',
+              {panelClass: 'snack-warning', horizontalPosition: 'end', verticalPosition: 'top', duration: 0});
             return;
           }
           this.chart = chart;
