@@ -102,10 +102,11 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   isJsonString(str: unknown): string {
+    if (typeof str !== "string") {
+      return '';
+    }
+
     try {
-      if (typeof str !== "string") {
-        throw "File data is not JSON!";
-      }
       JSON.parse(str);
     } catch (e) {
       return '';
