@@ -1,27 +1,25 @@
 # TestProject
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.2.6.
+This project reads json files and creates graphs and tables based on their data.
 
-## Development server
+## Technologies
+
+TypeScript, Angular 14.0, NgRx, Material, Chart.js
+
+## Features
+
+1. Reading json-files and checking their validation
+2. Creating graph and table, which can
+  - Show information and display graph segments on hover
+  - Sort and filter data in table by columns
+  - Switch between each other
+  
+## Installation
+
+1.Clone this repository to your local machine.
+2.Navigate to the root directory of the project.
+3.Run npm install to install the dependencies for front-end.
+
+## Development server and build
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
