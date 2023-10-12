@@ -14,16 +14,7 @@ export class AppComponent implements OnInit, OnDestroy {
   $sub: Subscription = new Subscription();
   chart?: IChartJs = undefined;
   isGraph: boolean = true;
-  chartForm: FormGroup = new FormGroup({
-    "labels": new FormControl('', Validators.minLength(1)),
-    "datasets": new FormArray([
-      new FormGroup({
-        "label": new FormControl('', Validators.required),
-        "data": new FormControl([], Validators.minLength(1)),
-        "backgroundColor": new FormControl('', Validators.required),
-      })
-    ]),
-  });
+  chartForm: FormGroup = new FormGroup({});
 
 
   ngOnDestroy(): void {
@@ -50,17 +41,26 @@ export class AppComponent implements OnInit, OnDestroy {
       ).subscribe({
         next: data => {
           if (!data) {
-            alert('File is incorrect!');
+            alert('File data is not JSON!');
             return;
           }
+          this.chartForm = this.clearFormGroup();
           const chart: IChartJs = JSON.parse(data);
-          if(!this.checkGraphInform(chart)) {
-            alert('File is incorrect!');
+          if(!this.checkGraphInform(chart) || !this.graphValidation(chart)) {
+            alert('Data type is incorrect!');
             return;
           }
           this.chart = chart;
         }
       })
+    );
+    this.$sub.add(
+      fromEvent(input, 'change').
+      subscribe(
+        () => {
+          (input as HTMLInputElement).value = '';
+        }
+      )
     );
   }
 
@@ -71,11 +71,26 @@ export class AppComponent implements OnInit, OnDestroy {
     return this.chartForm.status !== 'INVALID';
   }
 
+  graphValidation(chart: IChartJs) {
+    let result: string[] = [];
+    if(!chart.datasets || !chart.labels) {
+      return false;
+    }
+    for (let data of chart.datasets) {
+      if (result.includes(data.label) || chart.labels.length !== data.data.length) {
+        return false;
+      }
+      result.push(data.label);
+    }
+    return true;
+  }
+
+
 
   isJsonString(str: unknown): string {
     try {
       if (typeof str !== "string") {
-        throw "File is incorrect";
+        throw "File data is not JSON!";
       }
       JSON.parse(str);
     } catch (e) {
@@ -84,7 +99,16 @@ export class AppComponent implements OnInit, OnDestroy {
     return str;
   }
 
-
-
-
+  clearFormGroup() {
+    return new FormGroup({
+      "labels": new FormControl([], Validators.minLength(1)),
+      "datasets": new FormArray([
+      new FormGroup({
+        "label": new FormControl('', Validators.required),
+        "data": new FormControl([], Validators.minLength(1)),
+        "backgroundColor": new FormControl('', Validators.required),
+      })
+    ], Validators.minLength(1)),
+    })
+  }
 }

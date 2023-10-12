@@ -3,7 +3,7 @@
   <div class="button-div"><button (click)="isGraph=!isGraph">Change</button></div>
 </div>
 
-<app-graph [chart]="chart" *ngIf="isGraph && chart" class="component"></app-graph>
+<app-graph [setChart]="chart" *ngIf="isGraph && chart" class="component"></app-graph>
 <app-table [chart]="chart" *ngIf="!isGraph && chart" class="component"></app-table>
 
 
