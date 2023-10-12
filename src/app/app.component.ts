@@ -1,9 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {fromEvent, map, Subscription, switchMap} from "rxjs";
+import {EMPTY, fromEvent, map, Subscription, switchMap} from "rxjs";
 import {IChartJs} from "../interfaces/chart";
 import {fromPromise} from "rxjs/internal/observable/innerFrom";
 import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {catchError} from "rxjs/operators";
 
 @Component({
   selector: 'app-root',
@@ -33,6 +34,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.$sub.add(
       fromEvent(input, 'change').pipe(
+        catchError(() => {
+          this._snackBar.open('File upload error!', 'Close',
+            {panelClass: 'snack-warning', horizontalPosition: 'end', verticalPosition: 'top', duration: 0});
+          return EMPTY;
+        }),
         map((event) => {
           const target = event.target as HTMLInputElement;
           return (target.files || [])[0]
@@ -42,7 +48,8 @@ export class AppComponent implements OnInit, OnDestroy {
         }),
         map(res => {
           return this.isJsonString(res);
-        })
+        }),
+
       ).subscribe({
         next: data => {
           if (!data) {
