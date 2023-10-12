@@ -70,15 +70,19 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   graphValidation(chart: IChartJs) {
-    let result: string[] = [];
-    if (!chart.datasets || !chart.labels) {
-      return false;
-    }
-    for (let data of chart.datasets) {
-      if (result.includes(data.label) || chart.labels.length !== data.data.length) {
+    try {
+      let result: string[] = [];
+      if (!chart.datasets || !chart.labels) {
         return false;
       }
-      result.push(data.label);
+      for (let data of chart.datasets) {
+        if (result.includes(data.label) || chart.labels.length !== data.data.length || !data.label) {
+          return false;
+        }
+        result.push(data.label);
+      }
+    } catch (e) {
+      return false;
     }
     return true;
   }
