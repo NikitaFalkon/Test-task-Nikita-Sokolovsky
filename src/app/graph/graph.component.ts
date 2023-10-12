@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import Chart from "chart.js/auto";
 import {IChartJs} from "../../interfaces/chart";
 
@@ -7,24 +7,28 @@ import {IChartJs} from "../../interfaces/chart";
   templateUrl: './graph.component.html',
   styleUrls: ['./graph.component.css']
 })
-export class GraphComponent implements OnInit {
-  @Input() chart?: IChartJs = undefined;
+export class GraphComponent {
+  chart?: IChartJs = undefined;
   chartGraph?: any;
-  ngOnInit(): void {
-    this.createChart()
+  @Input() set setChart(chart: IChartJs) {
+    this.chart = chart;
+    this.createChart();
   }
-  createChart(){
-    console.log('>>',this.chart)
-    if(!this.chart) {
+
+  createChart() {
+    if (!this.chart) {
       return
     }
 
+    if (this.chartGraph) {
+      this.chartGraph.destroy();
+    }
 
     this.chartGraph = new Chart("MyChart", {
       type: 'line',
       data: this.chart,
       options: {
-        aspectRatio:2.5
+        aspectRatio: 2.5
       }
     });
   }

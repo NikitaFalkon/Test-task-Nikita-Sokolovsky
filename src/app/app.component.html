@@ -1,10 +1,12 @@
 <div class="menu">
   <label>Upload file: <input #file accept=".json, .txt, application/json" id="file" type="file"></label>
-  <div class="button-div"><button (click)="isGraph=!isGraph">Change</button></div>
+  <div class="button-div" *ngIf="chart">
+    <button mat-raised-button color="primary" (click)="isGraph=!isGraph">Change Display</button>
+  </div>
 </div>
 
 <app-graph [setChart]="chart" *ngIf="isGraph && chart" class="component"></app-graph>
-<app-table [chart]="chart" *ngIf="!isGraph && chart" class="component"></app-table>
+<app-table [setChart]="chart" *ngIf="!isGraph && chart" class="component"></app-table>
 
 
 

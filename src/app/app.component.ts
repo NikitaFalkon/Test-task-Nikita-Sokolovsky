@@ -46,7 +46,7 @@ export class AppComponent implements OnInit, OnDestroy {
           }
           this.chartForm = this.clearFormGroup();
           const chart: IChartJs = JSON.parse(data);
-          if(!this.checkGraphInform(chart) || !this.graphValidation(chart)) {
+          if (!this.checkGraphInform(chart) || !this.graphValidation(chart)) {
             alert('Data type is incorrect!');
             return;
           }
@@ -54,9 +54,9 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       })
     );
+
     this.$sub.add(
-      fromEvent(input, 'change').
-      subscribe(
+      fromEvent(input, 'change').subscribe(
         () => {
           (input as HTMLInputElement).value = '';
         }
@@ -64,16 +64,14 @@ export class AppComponent implements OnInit, OnDestroy {
     );
   }
 
-
   checkGraphInform(chart: IChartJs) {
     this.chartForm.patchValue(chart);
-    console.log(this.chartForm)
     return this.chartForm.status !== 'INVALID';
   }
 
   graphValidation(chart: IChartJs) {
     let result: string[] = [];
-    if(!chart.datasets || !chart.labels) {
+    if (!chart.datasets || !chart.labels) {
       return false;
     }
     for (let data of chart.datasets) {
@@ -84,8 +82,6 @@ export class AppComponent implements OnInit, OnDestroy {
     }
     return true;
   }
-
-
 
   isJsonString(str: unknown): string {
     try {
@@ -103,12 +99,12 @@ export class AppComponent implements OnInit, OnDestroy {
     return new FormGroup({
       "labels": new FormControl([], Validators.minLength(1)),
       "datasets": new FormArray([
-      new FormGroup({
-        "label": new FormControl('', Validators.required),
-        "data": new FormControl([], Validators.minLength(1)),
-        "backgroundColor": new FormControl('', Validators.required),
-      })
-    ], Validators.minLength(1)),
+        new FormGroup({
+          "label": new FormControl('', Validators.required),
+          "data": new FormControl([], Validators.minLength(1)),
+          "backgroundColor": new FormControl('', Validators.required),
+        })
+      ], Validators.minLength(1)),
     })
   }
 }
